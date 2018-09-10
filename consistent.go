@@ -37,14 +37,14 @@ func (c *ConsistentHash) Add(nk string, nd interface{}, nw uint) bool {
 	c.Lock()
 	defer c.Unlock()
 
+	if _, ok := c.actNodes[nk]; ok {
+		return false
+	}
+
 	n := &node{
 		key:    nk,
 		Data:   nd,
 		weight: nw,
-	}
-
-	if _, ok := c.actNodes[nk]; ok {
-		return false
 	}
 	count := int(VirtualNodesFactor * nw)
 	for i := 0; i < count; i++ {
